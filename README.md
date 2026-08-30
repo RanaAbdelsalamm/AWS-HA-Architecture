@@ -35,17 +35,17 @@ graph LR
     ALB --> EC2_B
 ```
 ## 🛠️ Infrastructure Components
-Virtual Private Cloud (VPC): Custom network spanning two Availability Zones.
+- Virtual Private Cloud (VPC): Custom network spanning two Availability Zones.
 
-Public & Private Subnets: Structured for security and scalability.
+- Public & Private Subnets: Structured for security and scalability.
 
-Internet Gateway (IGW): Enables outbound and inbound internet access for public subnets.
+- Internet Gateway (IGW): Enables outbound and inbound internet access for public subnets.
 
-Application Load Balancer (ALB): Distributes incoming HTTP traffic across the EC2 instances.
+- Application Load Balancer (ALB): Distributes incoming HTTP traffic across the EC2 instances.
 
-Auto Scaling Group (ASG): Dynamically scales the EC2 fleet (Min: 2, Max: 4) using a custom Launch Template.
+- Auto Scaling Group (ASG): Dynamically scales the EC2 fleet (Min: 2, Max: 4) using a custom Launch Template.
 
-Security Groups: Enforces the principle of least privilege (EC2 instances only accept traffic from the ALB).
+- Security Groups: Enforces the principle of least privilege (EC2 instances only accept traffic from the ALB).
 
 ## 🚀 Deployment Instructions
 1. Clone this repository:
@@ -66,6 +66,8 @@ git clone https://github.com/RanaAbdelsalamm/AWS-HA-Architecture.git
 7. Navigate to the EC2 Console -> Load Balancers, copy the ALB DNS name, and paste it into your browser to view the live web server.
 
 ## 🛡️ Security Posture
-ALB Security Group: Allows HTTP 80 from 0.0.0.0/0.
+- ALB Security Group: Allows HTTP 80 from 0.0.0.0/0.
 
-Web Server Security Group: Strictly allows HTTP 80 only from the ALB Security Group, preventing direct external access to the EC2 instances.
+- Web Server Security Group: Strictly allows HTTP 80 only from the ALB Security Group, preventing direct external access to the EC2 instances.
+
+  ## And Thank You ;]
