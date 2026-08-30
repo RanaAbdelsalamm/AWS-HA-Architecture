@@ -1,1 +1,27 @@
+AWSTemplateFormatVersion: '2010-09-09'
 
+Description: 'Part 2: EC2 Launch Template - Developed by Heba'
+
+Resources:
+
+  MyLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: WebServerTemplate
+
+      LaunchTemplateData:
+        ImageId: ami-0a3c3a20c09d6f377
+        InstanceType: t2.micro
+
+        SecurityGroupIds:
+          - !Ref InstanceSecurityGroup
+
+        UserData:
+          Fn::Base64: !Sub |
+            #!/bin/bash
+            yum update -y
+            yum install -y httpd
+            systemctl start httpd
+            systemctl enable httpd
+
+            echo "<h1>Welcome to Our AWS Team Project</h1>" > /var/www/html/index.html
