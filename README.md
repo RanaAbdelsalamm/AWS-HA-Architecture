@@ -50,7 +50,8 @@ Security Groups: Enforces the principle of least privilege (EC2 instances only a
 ## 🚀 Deployment Instructions
 1. Clone this repository:
 ```bash
-git clone https://github.com/RanaAbdelsalamm/AWS-HA-Architecture.git ```
+git clone https://github.com/RanaAbdelsalamm/AWS-HA-Architecture.git
+```
 
 2. Log in to the AWS Management Console and navigate to CloudFormation.
 
