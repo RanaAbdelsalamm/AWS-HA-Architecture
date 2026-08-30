@@ -8,32 +8,9 @@ A fault-tolerant, highly available web architecture deployed on Amazon Web Servi
 * **Menna Gamal**
 
 ## 🏗️ Architecture Diagram
-The following diagram is generated using Mermaid.js to illustrate our VPC structure and traffic flow:
 
-```mermaid
-graph LR
-    Users((Internet Users)) --> IGW[Internet Gateway]
-    IGW --> ALB{Application Load Balancer}
-    
-    subgraph VPC [VPC: HA-Project-VPC]
-        ALB
-        
-        subgraph AZ_A [Availability Zone A: us-east-1a]
-            subgraph PUB_A [Public Subnet 1]
-                EC2_A[EC2: Team-Web-Server]
-            end
-        end
-        
-        subgraph AZ_B [Availability Zone B: us-east-1b]
-            subgraph PUB_B [Public Subnet 2]
-                EC2_B[EC2: Team-Web-Server]
-            end
-        end
-    end
-    
-    ALB --> EC2_A
-    ALB --> EC2_B
-```
+![AWS HA Architecture Diagram](AWS-HA-ARCHDesign.png)
+
 ## 🛠️ Infrastructure Components
 - Virtual Private Cloud (VPC): Custom network spanning two Availability Zones.
 
