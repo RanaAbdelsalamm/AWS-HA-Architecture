@@ -34,7 +34,7 @@ graph LR
     ALB --> EC2_A
     ALB --> EC2_B
 ```
-🛠️ Infrastructure Components
+## 🛠️ Infrastructure Components
 Virtual Private Cloud (VPC): Custom network spanning two Availability Zones.
 
 Public & Private Subnets: Structured for security and scalability.
@@ -46,3 +46,25 @@ Application Load Balancer (ALB): Distributes incoming HTTP traffic across the EC
 Auto Scaling Group (ASG): Dynamically scales the EC2 fleet (Min: 2, Max: 4) using a custom Launch Template.
 
 Security Groups: Enforces the principle of least privilege (EC2 instances only accept traffic from the ALB).
+
+## 🚀 Deployment Instructions
+1. Clone this repository:
+```bash
+git clone https://github.com/RanaAbdelsalamm/AWS-HA-Architecture.git ```
+
+2. Log in to the AWS Management Console and navigate to CloudFormation.
+
+3. Select Create stack > With new resources (standard).
+
+4. Upload the template.yaml file included in this repository.
+
+5. Provide a Stack Name and click Next through the options, then click Submit.
+
+6. Wait for the status to show CREATE_COMPLETE.
+
+7. Navigate to the EC2 Console -> Load Balancers, copy the ALB DNS name, and paste it into your browser to view the live web server.
+
+## 🛡️ Security Posture
+ALB Security Group: Allows HTTP 80 from 0.0.0.0/0.
+
+Web Server Security Group: Strictly allows HTTP 80 only from the ALB Security Group, preventing direct external access to the EC2 instances.
