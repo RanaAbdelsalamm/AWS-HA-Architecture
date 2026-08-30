@@ -1,11 +1,12 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Part 1: VPC Networking, Public/Private Subnets, and Security Groups - Developed by Menna'
-
-# ==========================================
- # 1. Menna's Section: VPC & Networking
-# ==========================================
+Description: 'High Availability Web Architecture - Developed by Menna, Heba, and Rana'
 
 Resources:
+  
+  # ==========================================
+  # 1. Menna's Section: VPC & Networking
+  # ==========================================
+  
   # 1. Main Virtual Private Cloud (VPC)
   VPC:
     Type: AWS::EC2::VPC
@@ -107,7 +108,7 @@ Resources:
           SourceSecurityGroupId: !Ref ALBSecurityGroup
 
   # ==========================================
-   # 2. Heba's Section: EC2 Launch Template
+  # 2. Heba's Section: EC2 Launch Template
   # ==========================================
   
   # EC2 Launch Template for the Web Servers
@@ -135,11 +136,11 @@ Resources:
             systemctl enable httpd
             echo "<h1>Welcome to Our AWS Team Project</h1>" > /var/www/html/index.html
 
- # ==========================================
-  # 3. Rana's Section: ALB & Auto Scaling Section
- # ==========================================
+  # ==========================================
+  # 3. Rana's Section: ALB & Auto Scaling
+  # ==========================================
   
- #1. Target Group to connect instances with the Load Balancer
+  # 1. Target Group to connect instances with the Load Balancer
   MyTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
@@ -151,7 +152,7 @@ Resources:
       HealthCheckPath: /
       HealthCheckProtocol: HTTP
 
-  #2. Application Load Balancer Configuration
+  # 2. Application Load Balancer Configuration
   MyLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
@@ -162,7 +163,7 @@ Resources:
         - !Ref ALBSecurityGroup 
       Scheme: internet-facing
 
-  #3. ALB Listener for incoming traffic
+  # 3. ALB Listener for incoming traffic
   MyListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
@@ -173,7 +174,7 @@ Resources:
       Port: 80
       Protocol: HTTP
 
-  #4. Auto Scaling Group Configuration
+  # 4. Auto Scaling Group Configuration
   MyAutoScalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
