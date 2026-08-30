@@ -33,3 +33,16 @@ graph LR
     
     ALB --> EC2_A
     ALB --> EC2_B
+```
+🛠️ Infrastructure Components
+Virtual Private Cloud (VPC): Custom network spanning two Availability Zones.
+
+Public & Private Subnets: Structured for security and scalability.
+
+Internet Gateway (IGW): Enables outbound and inbound internet access for public subnets.
+
+Application Load Balancer (ALB): Distributes incoming HTTP traffic across the EC2 instances.
+
+Auto Scaling Group (ASG): Dynamically scales the EC2 fleet (Min: 2, Max: 4) using a custom Launch Template.
+
+Security Groups: Enforces the principle of least privilege (EC2 instances only accept traffic from the ALB).
