@@ -21,9 +21,10 @@ Resources:
   # 2. Internet Gateway and Attachment
   InternetGateway:
     Type: AWS::EC2::InternetGateway
-    Tags:
-      - Key: Name
-        Value: HA-Project-IGW
+    Properties:
+      Tags:
+        - Key: Name
+          Value: HA-Project-IGW
 
   VPCGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
