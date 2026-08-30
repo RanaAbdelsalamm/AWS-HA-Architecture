@@ -1,1 +1,57 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'High Availability Web Architecture - Team Project (VPC, EC2, ALB, AutoScaling)'
 
+Resources:
+  # ==========================================
+  # 1. جزء منة: VPC & Networking
+  # ==========================================
+  MyVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: ProjectVPC
+
+  # (منة هتضيف هنا الـ Subnets، الـ Internet Gateway، والـ Route Tables)
+
+  # ==========================================
+  # 2. جزء هبة: EC2 Launch Template
+  # ==========================================
+  MyLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties: 
+      LaunchTemplateName: WebServerTemplate
+      LaunchTemplateData:
+        ImageId: ami-0a3c3a20c09d6f377 # Amazon Linux 2023 (us-east-1)
+        InstanceType: t2.micro
+        UserData: 
+          Fn::Base64: !Sub |
+            #!/bin/bash
+            yum update -y
+            yum install -y httpd
+            systemctl start httpd
+            systemctl enable httpd
+            echo "<h1>Welcome to Our AWS Team Project</h1>" > /var/www/html/index.html
+
+  # ==========================================
+  # 3. جزئك: ALB & Auto Scaling
+  # ==========================================
+  MyAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      # هتربطي هنا بالـ Subnets اللي منة هتكريتها:
+      # VPCZoneIdentifier: 
+      #  - !Ref PrivateSubnet1 
+      #  - !Ref PrivateSubnet2
+      LaunchTemplate:
+        LaunchTemplateId: !Ref MyLaunchTemplate # ده بيربط بملف هبة
+        Version: !GetAtt MyLaunchTemplate.LatestVersionNumber
+      MinSize: '2'
+      MaxSize: '4'
+      # TargetGroupARNs:
+      #  - !Ref MyTargetGroup # ده بيربط بالـ Load Balancer بتاعك
+
+  # (هتضيفي هنا أكواد الـ Application Load Balancer والـ Target Group)
