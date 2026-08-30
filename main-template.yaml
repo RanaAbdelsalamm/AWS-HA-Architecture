@@ -36,22 +36,55 @@ Resources:
             systemctl enable httpd
             echo "<h1>Welcome to Our AWS Team Project</h1>" > /var/www/html/index.html
 
+ # ==========================================
+  # 3. ALB & Auto Scaling Section
   # ==========================================
-  # 3. جزئك: ALB & Auto Scaling
-  # ==========================================
+  
+  # Target Group to connect instances with the Load Balancer
+  MyTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      VpcId: !Ref MyVPC 
+      Port: 80
+      Protocol: HTTP
+      TargetType: instance
+      HealthCheckIntervalSeconds: 30
+      HealthCheckPath: /
+      HealthCheckProtocol: HTTP
+
+  # Application Load Balancer Configuration
+  MyLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Subnets:
+        - !Ref PublicSubnet1 
+        - !Ref PublicSubnet2 
+      SecurityGroups:
+        - !Ref ALBSecurityGroup 
+      Scheme: internet-facing
+
+  # ALB Listener for incoming traffic
+  MyListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref MyTargetGroup
+      LoadBalancerArn: !Ref MyLoadBalancer
+      Port: 80
+      Protocol: HTTP
+
+  # Auto Scaling Group Configuration
   MyAutoScalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
-      # هتربطي هنا بالـ Subnets اللي منة هتكريتها:
-      # VPCZoneIdentifier: 
-      #  - !Ref PrivateSubnet1 
-      #  - !Ref PrivateSubnet2
+      VPCZoneIdentifier:
+        - !Ref PrivateSubnet1 
+        - !Ref PrivateSubnet2 
       LaunchTemplate:
-        LaunchTemplateId: !Ref MyLaunchTemplate # ده بيربط بملف هبة
+        LaunchTemplateId: !Ref MyLaunchTemplate 
         Version: !GetAtt MyLaunchTemplate.LatestVersionNumber
       MinSize: '2'
       MaxSize: '4'
-      # TargetGroupARNs:
-      #  - !Ref MyTargetGroup # ده بيربط بالـ Load Balancer بتاعك
-
-  # (هتضيفي هنا أكواد الـ Application Load Balancer والـ Target Group)
+      TargetGroupARNs:
+        - !Ref MyTargetGroup
