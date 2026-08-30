@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'Part 1: VPC Networking, Public/Private Subnets, and Security Groups - Developed by Menna'
 
 # ==========================================
-  # 1. Menna's Section: VPC & Networking
+ # 1. Menna's Section: VPC & Networking
 # ==========================================
 
 Resources:
@@ -105,17 +105,28 @@ Resources:
           FromPort: 80
           ToPort: 80
           SourceSecurityGroupId: !Ref ALBSecurityGroup
+
   # ==========================================
-  # 2. جزء هبة: EC2 Launch Template
+   # 2. Heba's Section: EC2 Launch Template
   # ==========================================
+  
+  # EC2 Launch Template for the Web Servers
   MyLaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
-    Properties: 
+    Properties:
       LaunchTemplateName: WebServerTemplate
       LaunchTemplateData:
-        ImageId: ami-0a3c3a20c09d6f377 # Amazon Linux 2023 (us-east-1)
+        
+        # 1. Amazon Machine Image (Linux) and Instance Type
+        ImageId: ami-0a3c3a20c09d6f377
         InstanceType: t2.micro
-        UserData: 
+        
+        # 2. Security Group Attachment
+        SecurityGroupIds:
+          - !Ref InstanceSecurityGroup
+          
+        # 3. User Data Script to automatically start Apache Web Server
+        UserData:
           Fn::Base64: !Sub |
             #!/bin/bash
             yum update -y
