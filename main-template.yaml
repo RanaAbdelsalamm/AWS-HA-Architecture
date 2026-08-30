@@ -14,10 +14,16 @@ Resources:
       CidrBlock: 10.0.0.0/16
       EnableDnsSupport: true
       EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: HA-Project-VPC
 
   # 2. Internet Gateway and Attachment
   InternetGateway:
     Type: AWS::EC2::InternetGateway
+    Tags:
+      - Key: Name
+        Value: HA-Project-IGW
 
   VPCGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
@@ -25,7 +31,7 @@ Resources:
       VpcId: !Ref VPC
       InternetGatewayId: !Ref InternetGateway
 
-  # 3. Public Subnets (For Load Balancer)
+  # 3. Public Subnets (For Load Balancer & Web Servers to access Internet)
   PublicSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -33,6 +39,9 @@ Resources:
       CidrBlock: 10.0.1.0/24
       AvailabilityZone: us-east-1a
       MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: Public-Subnet-1
 
   PublicSubnet2:
     Type: AWS::EC2::Subnet
@@ -41,8 +50,11 @@ Resources:
       CidrBlock: 10.0.2.0/24
       AvailabilityZone: us-east-1b
       MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: Public-Subnet-2
 
-  # 4. Private Subnets (For Web Application EC2 Instances)
+  # 4. Private Subnets (Currently not used for servers to allow Apache installation, but kept for architecture)
   PrivateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -50,6 +62,9 @@ Resources:
       CidrBlock: 10.0.3.0/24
       AvailabilityZone: us-east-1a
       MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: Private-Subnet-1
 
   PrivateSubnet2:
     Type: AWS::EC2::Subnet
@@ -58,12 +73,18 @@ Resources:
       CidrBlock: 10.0.4.0/24
       AvailabilityZone: us-east-1b
       MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: Private-Subnet-2
 
   # 5. Public Route Table and Subnet Associations
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: Public-Route-Table
 
   PublicRoute:
     Type: AWS::EC2::Route
@@ -95,6 +116,9 @@ Resources:
           FromPort: 80
           ToPort: 80
           CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: ALB-Security-Group
 
   InstanceSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -106,6 +130,9 @@ Resources:
           FromPort: 80
           ToPort: 80
           SourceSecurityGroupId: !Ref ALBSecurityGroup
+      Tags:
+        - Key: Name
+          Value: Web-Server-SG
 
   # ==========================================
   # 2. Heba's Section: EC2 Launch Template
@@ -151,6 +178,9 @@ Resources:
       HealthCheckIntervalSeconds: 30
       HealthCheckPath: /
       HealthCheckProtocol: HTTP
+      Tags:
+        - Key: Name
+          Value: HA-Target-Group
 
   # 2. Application Load Balancer Configuration
   MyLoadBalancer:
@@ -162,6 +192,9 @@ Resources:
       SecurityGroups:
         - !Ref ALBSecurityGroup 
       Scheme: internet-facing
+      Tags:
+        - Key: Name
+          Value: HA-Application-Load-Balancer
 
   # 3. ALB Listener for incoming traffic
   MyListener:
@@ -178,9 +211,10 @@ Resources:
   MyAutoScalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
+      # Adjusted to Public Subnets so servers can download Apache
       VPCZoneIdentifier:
-        - !Ref PrivateSubnet1 
-        - !Ref PrivateSubnet2 
+        - !Ref PublicSubnet1 
+        - !Ref PublicSubnet2 
       LaunchTemplate:
         LaunchTemplateId: !Ref MyLaunchTemplate 
         Version: !GetAtt MyLaunchTemplate.LatestVersionNumber
@@ -188,3 +222,8 @@ Resources:
       MaxSize: '4'
       TargetGroupARNs:
         - !Ref MyTargetGroup
+      # Tags added so instances get a clear name when created
+      Tags:
+        - Key: Name
+          Value: Team-Web-Server
+          PropagateAtLaunch: true
